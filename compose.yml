@@ -1,0 +1,28 @@
+services:
+  
+  apache:
+    build: apache
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      redehttps:
+        aliases:
+          - novositio.lan      
+    volumes:
+      - ./apache/config/novositio.conf:/etc/apache2/sites-available/novositio.conf
+      - ./apache/web/novositio.lan/htdocs:/var/www/html
+      - ./apache/certs:/certificados
+      - ./apache/hosts:/etc/hosts
+
+  cliente:
+    image: brunosct/debian12-cliente-firefox
+    hostname: cliente
+    networks:
+      - redehttps
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix      
+networks:
+  redehttps:
